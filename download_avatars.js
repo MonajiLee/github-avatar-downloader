@@ -17,8 +17,11 @@ var fs = require('fs');
     //         console.log('Run operation completed.')
     //     })
 
+const repoOwner = process.argv[2];
+const repoName = process.argv[3];
 
 function getRepoContributors(repoOwner, repoName, cb) {
+    
     var options = {
         url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
         headers: {
@@ -31,21 +34,18 @@ function getRepoContributors(repoOwner, repoName, cb) {
         if (err){
             console.log('Errors:', err)
         } else {
-            var json = JSON.parse(body);
-            cb(null, findURLs(json));           // why do we use cb vs downloadImageByURL?
+            // var json = JSON.parse(body);
+            cb(null, JSON.parse(body));           // why do we use cb vs downloadImageByURL?
         }
     })
 
     function findURLs(json) {
         json.forEach(function(element){
-            downloadImageByURL(element.avatar_url, 'avatars/' + element.login + '.jpg');
+            let imagePath = 'avatars/' + element.login + '.jpg'
+            downloadImageByURL(element.avatar_url, imagePath);
         })
     }
 }
-
-// cb loops through each item in the array:
-// It constructs a file path using the login value (e.g., "avatars/dhh.jpg")
-// It then passes the avatar_url value and the file path to downloadImageByURL
 
 function downloadImageByURL(url, filePath) {
     let downloadURL = request.get(url).pipe(fs.createWriteStream(filePath));
@@ -53,10 +53,7 @@ function downloadImageByURL(url, filePath) {
 }
 
 
-// downloadImageByURL("https://avatars3.githubusercontent.com/u/1199584?v=4", "avatars/rosy.jpg")
-
-
-getRepoContributors("jquery", "jquery", function(err, result) {
+getRepoContributors(repoOwner, repoName, function(err, result) {
     console.log("Errors:", err);
     console.log("Result:", result);
 });
