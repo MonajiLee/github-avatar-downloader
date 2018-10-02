@@ -22,6 +22,11 @@ const repoName = process.argv[3];
 
 function getRepoContributors(repoOwner, repoName, cb) {
     
+    if (repoOwner !== false || repoName !== false){
+        console.log('Invalid repoOwner or repoName');
+        return;
+    };
+
     var options = {
         url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
         headers: {
@@ -35,7 +40,7 @@ function getRepoContributors(repoOwner, repoName, cb) {
             console.log('Errors:', err)
         } else {
             // var json = JSON.parse(body);
-            cb(null, JSON.parse(body));           // why do we use cb vs downloadImageByURL?
+            cb(null, JSON.parse(body));
         }
     })
 
